@@ -4,99 +4,16 @@
 #include <stack>
 #include <vector>
 
-
-enum class Operator { ADD, SUB, MUL, DIV};
-enum class TokenType { OPERATOR, OPERAND };
-struct Token {
-  TokenType type;
-  float value;
-  Operator op;
-};
-
-Token make_token(float value){
-    Token token;
-    token.type=TokenType::OPERAND;
-    token.value=value;
-    return token;
-
+size_t quick_sort_partition(std::vector<int> & vec, size_t left, size_t right);
+//place pivot
+void quick_sort(std::vector<int> & vec, size_t const left, size_t const right);
+//tab des 2 coté
+void quick_sort(std::vector<int> & vec) {
+    quick_sort(vec, 0, vec.size() - 1);
 }
-
-Token make_token(Operator op){
-     Token token;
-    token.type=TokenType::OPERATOR;
-    token.op=op;
-    return token;
-
+//tab général
+void merge_sort_merge(std::vector<int> & vec, size_t const left, size_t const middle, size_t const right);
+void merge_sort(std::vector<int> & vec, size_t const left, size_t const right);
+void merge_sort(std::vector<int> & vec) {
+    merge_sort(vec, 0, vec.size() - 1);
 }
-
-std::vector<Token> tokenize(std::vector<std::string> const& words)
-{
-    std::vector<Token> token; //le resultat
-    for (std::string const& w : words){ //énumérer comme l'autre ex en fct des op
-        if (w=="+"){
-            token.push_back(make_token(Operator::ADD));
-        }
-        else if (w=="-"){
-            token.push_back(make_token(Operator::SUB));
-        }
-        else if (w=="*"){
-            token.push_back(make_token(Operator::MUL));
-        }
-        else if (w=="/"){
-            token.push_back(make_token(Operator::DIV));
-        }
-        else{
-            float value =std::stof(w);
-            token.push_back(make_token(value));
-        }
-        
-    }
-return token; }
-
-float npi_evaluate( std::vector<Token> const& tokens);
-
-int main (){
-    return 0;
-}
-
-
-
-
-/*4️ Fonction npi_evaluate
-float npi_evaluate(const std::vector<Token>& tokens) {
-    std::stack<float> s;
-
-    for (const Token& t : tokens) {
-        if (t.type == TokenType::OPERAND) {
-            s.push(t.value);
-        } else {
-            // On suppose qu'il y a toujours au moins 2 éléments
-            float b = s.top(); s.pop();
-            float a = s.top(); s.pop();
-            float result;
-
-            switch (t.op) {
-                case Operator::ADD: result = a + b; break;
-                case Operator::SUB: result = a - b; break;
-                case Operator::MUL: result = a * b; break;
-                case Operator::DIV: result = a / b; break;
-            }
-
-            s.push(result);
-        }
-    }
-
-    return s.top();
-}
-
-// 5️ Exemple d'utilisation
-int main() {
-    std::vector<std::string> words = {"3", "4", "+", "2", "*", "7", "/"};
-    std::vector<Token> tokens = tokenize(words);
-
-    float result = npi_evaluate(tokens);
-    std::cout << "Résultat: " << result << std::endl;
-
-    return 0;
-}
-*/
