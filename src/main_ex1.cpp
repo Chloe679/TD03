@@ -12,14 +12,11 @@ bool is_sorted(std::vector<int> const& vec)
 }
 
 void bubble_sort(std::vector<int> & vec){
-    int temp=0;
-    int  n=static_cast<int> (vec.size()); // mettre size_t
-    for (int debut=1;debut<=n-1; debut++ )
-    for ( int i=debut; i<=n-1; i++){
+    size_t n= (vec.size()); 
+    for (size_t debut=1;debut<=n-1; debut++ )
+    for ( size_t i=debut; i<=n-1; i++){
         if (vec[i-1]>vec[i]){
-            temp=vec[i-1];
-            vec[i-1]=vec[i];
-            vec[i]=temp;
+            std::swap(vec[i-1],vec[i]);
         }
        
 

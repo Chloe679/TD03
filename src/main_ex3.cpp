@@ -1,208 +1,79 @@
+#include <vector>
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <stack>
 #include <vector>
-//EX PRECEDENT
-#include <vector>
-#include <string>
-#include <sstream>
-#include <iterator>
+#include<locale>
+#include <cstdlib>
+#include "ScopedTimer.hpp"
+#include<locale>
 
-std::vector<std::string> split_string(std::string const& s)
-{
-    std::istringstream in(s); // transforme une chaîne en flux de caractères, cela simule un flux comme l'est std::cin
-    // l’itérateur va lire chaque element de "in", comme un flux d'entrée, chaque élément est séparé par un espace
-    return std::vector<std::string>(std::istream_iterator<std::string>(in), std::istream_iterator<std::string>()); 
-}
-
-enum class Operator { ADD, SUB, MUL, DIV, OPEN_PAREN, CLOSE_PAREN};
-enum class TokenType { OPERATOR, OPERAND };
-
-struct Token {
-  TokenType type;
-  float value;
-  Operator op;
-};
-
-Token make_token(float value){
-    Token token;
-    token.type=TokenType::OPERAND;
-    token.value=value;
-    return token;
-
-}
-
-Token make_token(Operator op){
-    Token token;
-    token.type=TokenType::OPERATOR;
-    token.op=op;
-    return token;
-
-}
-
-std::vector<Token> tokenize(std::vector<std::string> const& words)
-{
-    std::vector<Token> token; //le resultat
-    for (std::string const& w : words){ //énumérer comme l'autre ex en fct des op
-        if (w=="+"){
-            token.push_back(make_token(Operator::ADD));
+//tab entier aléatoire
+void bubble_sort(std::vector<int> & vec){
+    size_t n= (vec.size()); 
+    for (size_t debut=1;debut<=n-1; debut++ )
+    for ( size_t i=debut; i<=n-1; i++){
+        if (vec[i-1]>vec[i]){
+            std::swap(vec[i-1],vec[i]);
         }
-        else if (w=="-"){
-            token.push_back(make_token(Operator::SUB));
-        }
-        else if (w=="*"){
-            token.push_back(make_token(Operator::MUL));
-        }
-        else if (w=="/"){
-            token.push_back(make_token(Operator::DIV));
-        }
-        else if (w == "(") {
-        token.push_back(make_token(Operator::OPEN_PAREN));
-        }
-        else if (w == ")") {
-        token.push_back(make_token(Operator::CLOSE_PAREN));
-        }
-        else{
-            float value =std::stof(w);
-            token.push_back(make_token(value));
-        }
-        
+       
+
     }
-    return token; 
+}
+
+std::vector<int> generate_random_vector(size_t const size, int const max = 100) {
+    std::vector<int> vec(size);
+    std::generate(vec.begin(), vec.end(), [&max]() { return std::rand() % max;} );
+    return vec;
 }
 
 
-
-
-
-
-
-int operator_precedence(Operator const op){
-    if( op == Operator::MUL || op== Operator::DIV){
-        return 2;
-    }
-       if (op == Operator::ADD || op == Operator::SUB)
-        return 1;
-    return 0;
-
-}
-
-std::vector<Token> infix_to_npi_tokens(std::string const& expression){
-    //std::stack<float> pile; //pile nbr
-    std::stack<Token> oppile; //pile opérateur
-    std::vector<Token> sortie;
-    std::vector<std::string> mot=split_string(expression); //on sépare chaque ele
-    std::vector<Token> tokens=tokenize(mot); //
-    for ( Token const& w : tokens) 
-    {
-        if( w.type == TokenType::OPERAND){//c une val
-            sortie.push_back(w);
-        }
-        else if (w.type== TokenType::OPERATOR){
-             //c'ets un op
-            if  (w.op == Operator::OPEN_PAREN){
-                oppile.push(w); //on empile
-            }
-            else if(w.op == Operator::CLOSE_PAREN){ //si ) on dépile jusq'à )
-                while (!oppile.empty() && oppile.top().op != Operator::OPEN_PAREN ) {
-                    //on dépile
-                    sortie.push_back(oppile.top()); //empile sortie
-                    oppile.pop(); //on dépile op pile
-
-                }
-                oppile.pop(); // on enleve )
-            }
-            else {
-                //op prio 
-                while (!oppile.empty() && operator_precedence(oppile.top().op) >= operator_precedence(w.op)){ // prio dessus
-                        sortie.push_back(oppile.top());
-                        oppile.pop();
-                }
-                oppile.push(w); //on ajoute op à la sortie et on arrête
+size_t quick_sort_partition(std::vector<int> & vec, size_t left, size_t right){
+    size_t pivot = right;  //on prend pivot= dernier ele
+    //on trie
+        size_t i= left; //début tab
+        for (size_t j=i;j<right;j++){
+            if (vec[j]<=vec[pivot]){ // alors à gauche du pivot
+                std::swap(vec[j],vec[i]);
+                i++; //on garde indice de dep + - grand
             }
         }
-    }
-            //on vide tout mtn
-            while (!oppile.empty()){
-                sortie.push_back(oppile.top());
-                oppile.pop();
-            }
-            return sortie;
-                }
-
-
-
-float npi(std::string ligne) {
-    //std::string ligne;
-    //std::getline(std::cin, ligne);
-
-    std::stringstream ss(ligne);
-    std::string token;
-
-    std::stack<float> pile;
-
-    while (ss >> token) {
-
-        if (token == "+" || token == "-" || token == "*" || token == "/") {
-            
-            float b = pile.top();
-            pile.pop();
-            float a = pile.top();
-            pile.pop();
-
-            float resultat;
-
-            if (token == "+") resultat = a + b;
-            if (token == "-") resultat = a - b;
-            if (token == "*") resultat = a * b;
-            if (token == "/") resultat = a / b;
-
-            pile.push(resultat);
-        }
-        else {
-            pile.push(std::stof(token));
-        }
-    }
-
-    return pile.top();
+        std::swap(vec[i],vec[pivot]); //on place le pivot
+        return i; //on retourne l'indice du pivot
 }
+//place pivot
 
-std::string token_to_string(std::vector<Token> tokens){
-       std::string result;
-
-    for (const Token& t : tokens) {
-        if (t.type == TokenType::OPERAND) {
-            result += std::to_string(t.value) + " ";
-        } else {
-            switch (t.op) {
-                case Operator::ADD: result += "+ "; break;
-                case Operator::SUB: result += "- "; break;
-                case Operator::MUL: result += "* "; break;
-                case Operator::DIV: result += "/ "; break;
-                default: break;
-            }
-        }
+void quick_sort(std::vector<int> & vec, size_t const left, size_t const right){
+    size_t pivot= quick_sort_partition(vec,left,right); //on trie et on place le pivot
+    if (left>=right){ //condition arrêt
+    //tab gauche
+    if (pivot>=1){ //pr pas overflow
+        quick_sort(vec,left, pivot-1);
     }
-
-    return result;
+    //taab droite
+        quick_sort(vec,pivot+1, right);
+    }
 }
 
 
-int main() { 
-    std::cout<< "écrire un calcul:";
-    std::string expression;
-    std::getline(std::cin,expression);
-//infixe en NPI
-    std::vector<Token> tokens =infix_to_npi_tokens(expression);
-//Tokens en string
-std::string npi_string= token_to_string(tokens);
- std::cout << "NPI: " << npi_string << std::endl;
+    void quick_sort(std::vector<int> & vec) {
+        quick_sort(vec, 0, vec.size() - 1);
+    }
 
-    // 3. Calcul
-    float result = npi(npi_string);
+int main(){
+//tableaux
+    setlocale(LC_ALL, ".utf8");
+    std::vector<int> array1 = generate_random_vector(10000, 100);
+    std::vector<int> array2 = array1;
+    std::vector<int> array3 = array1; //copie pr comparer
 
-    std::cout << "Résultat: " << result << std::endl;
 
-    return 0;
+    ScopedTimer timer1("Tri issu de la bibliothèque");
+    std::sort(array1.begin(), array1.end());
+    ScopedTimer timer2("Tri à bulles");
+    bubble_sort(array2);
+    ScopedTimer timer3("Tri Récursif");
+    quick_sort(array3);
 }
