@@ -24,11 +24,12 @@ void bubble_sort(std::vector<int> & vec){
 }
 
 int main(){
+    setlocale(LC_ALL, ".utf8");
     std::vector<int> array {1, 2, 3, 4, 5, 6, 7, 8, 9};
-    bubble_sort(array);
-if (is_sorted(array)) {
-    std::cout << "Le tableau est trié" << std::endl;
-} else {
-    std::cout << "Le tableau n'est pas trié" << std::endl;
-}
-}
+        bubble_sort(array);
+    if (is_sorted(array)) {
+        std::cout << "Le tableau est trié" << std::endl;
+    } else {
+        std::cout << "Le tableau n'est pas trié" << std::endl;
+    }
+    }

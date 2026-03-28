@@ -46,15 +46,18 @@ size_t quick_sort_partition(std::vector<int> & vec, size_t left, size_t right){
 //place pivot
 
 void quick_sort(std::vector<int> & vec, size_t const left, size_t const right){
-    size_t pivot= quick_sort_partition(vec,left,right); //on trie et on place le pivot
+  
     if (left>=right){ //condition arrêt
+    return;}
+
+    
     //tab gauche
+      size_t pivot= quick_sort_partition(vec,left,right); //on trie et on place le pivot
     if (pivot>=1){ //pr pas overflow
         quick_sort(vec,left, pivot-1);
     }
     //taab droite
         quick_sort(vec,pivot+1, right);
-    }
 }
 
 
@@ -69,11 +72,16 @@ int main(){
     std::vector<int> array2 = array1;
     std::vector<int> array3 = array1; //copie pr comparer
 
-
+{
     ScopedTimer timer1("Tri issu de la bibliothèque");
     std::sort(array1.begin(), array1.end());
+}
+{
     ScopedTimer timer2("Tri à bulles");
     bubble_sort(array2);
+}
+{
     ScopedTimer timer3("Tri Récursif");
     quick_sort(array3);
+}
 }
